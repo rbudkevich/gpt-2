@@ -54,7 +54,12 @@ def interact_model(
     elif length > hparams.n_ctx:
         raise ValueError("Can't get samples longer than window size: %s" % hparams.n_ctx)
 
-    with tf.Session(graph=tf.Graph()) as sess:
+    with tf.Session(graph=tf.Graph(),
+                    config=tf.ConfigProto(
+                    device_count={ "CPU": 20 },
+                    inter_op_parallelism_threads=20,
+                    intra_op_parallelism_threads=20,
+                )) as sess:
         context = tf.placeholder(tf.int32, [batch_size, None])
         np.random.seed(seed)
         tf.set_random_seed(seed)
